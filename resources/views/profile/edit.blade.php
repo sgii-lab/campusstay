@@ -1,29 +1,42 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@section('content')
+<div class="max-w-2xl mx-auto p-6 bg-white shadow rounded">
+    <h2 class="text-xl font-bold mb-4">Profile</h2>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
+    @if (session('status') === 'profile-updated')
+        <div class="bg-green-100 text-green-700 p-2 mb-4 rounded">
+            Profile updated successfully.
         </div>
-    </div>
-</x-app-layout>
+    @endif
+
+    <form method="POST" action="{{ route('profile.update') }}" class="space-y-4">
+        @csrf
+        @method('PATCH')
+
+        <div>
+            <label>Name</label>
+            <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full border rounded p-2">
+        </div>
+
+        <div>
+            <label>Email</label>
+            <input type="email" name="email" value="{{ old('email', $user->email) }}" class="w-full border rounded p-2">
+        </div>
+
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Update</button>
+    </form>
+
+    <form method="POST" action="{{ route('profile.destroy') }}" class="mt-6">
+        @csrf
+        @method('DELETE')
+
+        <div>
+            <label>Password</label>
+            <input type="password" name="password" class="w-full border rounded p-2">
+        </div>
+
+        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded">Delete Account</button>
+    </form>
+</div>
+@endsection

@@ -9,6 +9,12 @@ Route::get('/', [PropertyController::class, 'index'])->name('home');
 
 // Landlord routes
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
 Route::middleware(['auth', 'landlord'])->group(function () {
     Route::get('/landlord/dashboard', [PropertyController::class, 'dashboard'])
         ->name('landlord.dashboard');
