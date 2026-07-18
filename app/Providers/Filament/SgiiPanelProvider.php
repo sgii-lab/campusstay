@@ -29,6 +29,7 @@ class SgiiPanelProvider extends PanelProvider
             ->path('admin')
             //->auth(fn () => Auth::check() && Auth::user()?->role === 'admin') // ✅ role restriction
             ->login() // ✅ Filament login page
+            ->authGuard('admin')
             ->colors([
                 'primary' => Color::Amber,
             ])

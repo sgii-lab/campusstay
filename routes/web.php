@@ -3,9 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PropertyController;
-use App\Http\Controllers\LandlordController;;
+use App\Http\Controllers\LandlordController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ContactController;
+
 
 // Homepage
 Route::get('/', [PropertyController::class, 'index'])->name('home');
@@ -76,7 +77,6 @@ Route::middleware(['auth', 'landlord'])->group(function () {
 });
 
 
-
 Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
@@ -92,6 +92,16 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/'); // ✅ home page
 })->name('logout');
+
+Route::post('/admin/logout', function () {
+    Auth::guard('admin')->logout();   // ✅ clear admin guard
+    Auth::logout();                   // optional: clear default guard too
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+
+    return redirect('/');
+})->name('filament.admin.auth.logout');
+
 
 
 

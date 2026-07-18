@@ -9,9 +9,14 @@ class AdminOnly
 {
     public function handle($request, Closure $next)
     {
-        // Block if not logged in or not admin
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
-            abort(403, 'Unauthorized');
+        // Allow access to login page
+        if ($request->is('admin/login') || $request->is('admin/login/*')) {
+            return $next($request);
+        }
+
+        // Check guard and role
+        if (!Auth::guard('admin')->check() || Auth::guard('admin')->user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Unauthorized');
         }
 
         return $next($request);

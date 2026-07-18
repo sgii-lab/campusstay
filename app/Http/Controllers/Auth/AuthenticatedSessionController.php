@@ -41,12 +41,20 @@ class AuthenticatedSessionController extends Controller
 
         if ($user->role === 'landlord') {
             return redirect()->route('landlord.dashboard');
-        } elseif ($user->role === 'admin') {
-            return redirect('/admin'); // Filament admin panel
-        } else {
-            return redirect('/'); // or home
         }
+
+        if ($user->role === 'admin') {
+            return redirect('/admin'); // Filament admin panel
+        }
+
+        if ($user->role === 'student') {
+            return redirect()->route('student.dashboard');
+        }
+
+        // ✅ fallback for tests and generic users
+        return redirect()->intended(route('dashboard'));
     }
+
 
 
     /**

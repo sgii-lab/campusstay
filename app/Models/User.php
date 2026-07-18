@@ -78,4 +78,10 @@ class User extends Authenticatable
         return $this->hasMany(StudentPropertyRequest::class, 'student_id');
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+
 }

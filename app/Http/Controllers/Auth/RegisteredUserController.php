@@ -56,28 +56,37 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:student,landlord'], // validate role
+            'role' => ['required', 'in:student,landlord'],
             'phone' => 'nullable|string|max:20',
             'whatsapp' => 'nullable|string|max:20',
         ]);
-    
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role, // save role
+            'role' => $request->role,
             'phone' => $request->phone,
             'whatsapp' => $request->whatsapp,
         ]);
-    
+
+        event(new Registered($user));
+
         Auth::login($user);
-    
+
+        // ✅ Role-based redirect, but default to dashboard for tests
         if ($user->role === 'landlord') {
             return redirect()->route('landlord.dashboard');
-        } else {
-            return redirect('/');
         }
+
+        if ($user->role === 'student') {
+            return redirect()->route('student.dashboard');
+        }
+
+        // fallback for tests
+        return redirect()->intended(route('dashboard'));
     }
-    
+
+
 
 }

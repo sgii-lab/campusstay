@@ -1,19 +1,27 @@
 <header class="site-header">
     <div class="header-container">
         <a href="/" class="logo">
-            <img src="{{ asset('images/logo.png') }}" alt="CampusStay Logo" class="logo">
+            <img src="{{ asset('images/logo2.png') }}" alt="CampusStay Logo" class="logo">
         </a>
 
         @include('layouts.navigation')
 
         <div class="header-actions">
-            <!-- @auth
-                @if(Auth::user()->role === 'landlord')
-                    <a href="{{ route('landlord.dashboard') }}" class="landlord-btn">Landlord Dashboard</a>
-                @endif
-            @endauth -->
+
             @auth
-                <span class="welcome">Hello, {{ Auth::user()->name }}</span>
+                @php
+                    // Get full name
+                    $fullName = Auth::user()->name;
+
+                    // Extract first name
+                    $firstName = explode(' ', $fullName)[0];
+
+                    // If longer than 10 chars, shorten
+                    $displayName = strlen($firstName) > 10 ? substr($firstName, 0, 10) . '…' : $firstName;
+                @endphp
+
+                <span class="welcome">Hello, {{ $displayName }}</span>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn-secondary">Logout</button>
