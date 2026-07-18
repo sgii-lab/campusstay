@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use App\Models\Property;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Notifications\PropertyLiked;
 use App\Notifications\PropertyRequested;
@@ -14,38 +12,38 @@ use App\Models\PropertyRequest;
 
 class PropertyController extends Controller
 {
-
     use AuthorizesRequests;
-    // Homepage: show approved properties
+
+    // Homepage: show approved properties only
     public function index(Request $request)
     {
         $query = Property::query();
-    
+
         $student = auth()->user();
-    
+
         if ($student && $student->school_location) {
             $query->where('location', 'like', '%' . $student->school_location . '%');
         }
-    
-        // Optional: allow manual filter override
+
         if ($request->filled('location')) {
             $query->where('location', 'like', '%' . $request->location . '%');
         }
-    
+
         if ($request->filled('min_price')) {
             $query->where('price', '>=', $request->min_price);
         }
+
         if ($request->filled('max_price')) {
             $query->where('price', '<=', $request->max_price);
         }
-    
-        $properties = $query->paginate(10);
-    
+
+        $query->where('status', 'approved');
+
+        $properties = $query->latest()->paginate(10);
+
         return view('home', compact('properties'));
     }
-    
 
-    
     // Landlord dashboard
     public function dashboard()
     {
@@ -68,52 +66,34 @@ class PropertyController extends Controller
             'location' => 'required',
             'price' => 'required|numeric',
             'image' => 'nullable|mimes:jpg,jpeg,png,gif,webp|max:2048',
-
         ]);
 
-        // Safely handle image
         $path = null;
         if ($request->hasFile('image')) {
-            $path = $request->file('image')?->store('properties', 'public');
+            $path = $request->file('image')->store('properties', 'public');
         }
-        
-    
+
         Auth::user()->properties()->create([
             'title' => $request->title,
             'description' => $request->description,
             'location' => $request->location,
             'price' => $request->price,
-            'image' => $path, // will be null if no image uploaded.
+            'image' => $path,
             'status' => 'pending',
-            'landlord_id' => auth()->id(), //  make sure this is set
+            'landlord_id' => auth()->id, // ✅ fixed
         ]);
-        
 
-        // $path = $request->file('image')?->store('properties', 'public');
-        // Auth::user()->properties()->create([
-        //     'title' => $request->title,
-        //     'description' => $request->description,
-        //     'location' => $request->location,
-        //     'price' => $request->price,
-        //     'image' => $path,
-        //     'status' => 'pending',
-        // ]);
-
-    
         return redirect()->route('landlord.dashboard')
             ->with('success', 'Listing submitted!');
     }
 
     public function edit(Property $property)
     {
-        //$this->authorize('update', $property); // optional: ensure landlord owns it
         return view('landlord.edit-property', compact('property'));
     }
-    
+
     public function update(Request $request, Property $property)
     {
-        //$this->authorize('update', $property);
-    
         $request->validate([
             'title' => 'required',
             'description' => 'required',
@@ -128,17 +108,14 @@ class PropertyController extends Controller
             $data['image'] = $request->file('image')->store('properties', 'public');
         }
 
-    
         $property->update($data);
-    
+
         return redirect()->route('landlord.dashboard')->with('success','Listing updated!');
     }
-    
+
     public function destroy(Property $property)
     {
-        //$this->authorize('delete', $property);
         $property->delete();
-    
         return redirect()->route('landlord.dashboard')->with('success','Listing deleted!');
     }
 
@@ -167,7 +144,7 @@ class PropertyController extends Controller
     {
         $property->landlord->notify(new PropertyLiked($property, Auth::user()));
 
-        Auth::user()->likedProperties()->syncWithoutDetaching([$property->id]);
+        Auth::user()->likedProperties()->syncWithoutDetaching([$property->id]); // ✅ use property not method
         return back()->with('success', 'Property liked!');
     }
 
@@ -175,16 +152,12 @@ class PropertyController extends Controller
     {
         $request = PropertyRequest::create([
             'property_id' => $property->id,
-            'student_id' => auth()->id(),
+            'student_id' => auth()->id,
             'status' => 'pending',
         ]);
-    
-        // notify landlord
-        $property->landlord->notify(new \App\Notifications\PropertyRequested($property, auth()->user()));
-    
+
+        $property->landlord->notify(new PropertyRequested($property, auth()->user()));
+
         return back()->with('success', 'Request submitted!');
     }
-
-
-    
 }

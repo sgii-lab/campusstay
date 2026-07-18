@@ -36,4 +36,10 @@ class Property extends Model
         return $this->hasMany(StudentPropertyRequest::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+
 }
