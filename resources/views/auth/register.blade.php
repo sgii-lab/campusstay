@@ -9,6 +9,26 @@
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
+        <div>
+            <label for="role">Register as:</label>
+            <select id="role" name="role" required>
+                <option value="student">Student</option>
+                <option value="landlord">Landlord</option>
+            </select>
+        </div>
+
+        <!-- Phone Number -->
+        <div>
+            <label class="block font-semibold">Phone</label>
+            <input type="text" name="phone" class="w-full border rounded px-3 py-2" placeholder="0712345678" required>
+        </div>
+
+        <!-- WhatsApp Number -->
+        <div>
+            <label class="block font-semibold">WhatsApp Number</label>
+            <input type="text" name="whatsapp" class="w-full border rounded px-3 py-2" placeholder="0712345678" required>
+        </div>
+
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />

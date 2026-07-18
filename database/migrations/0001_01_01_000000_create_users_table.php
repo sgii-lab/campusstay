@@ -17,6 +17,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('school')->nullable();
+            $table->string('school_id')->nullable();
+            $table->enum('role', ['student','landlord','admin'])->default('student');
+            $table->string('phone')->nullable();
+            $table->string('whatsapp')->nullable();
+            $table->string('preferred_location')->nullable();
+            $table->decimal('budget_min', 10, 2)->nullable();
+            $table->decimal('budget_max', 10, 2)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

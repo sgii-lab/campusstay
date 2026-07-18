@@ -24,4 +24,16 @@ class Property extends Model
     {
         return $this->belongsTo(User::class, 'landlord_id');
     }
+
+    public function likedByStudents()
+    {
+        return $this->belongsToMany(User::class, 'student_property_likes', 'property_id', 'student_id')
+                    ->withTimestamps();
+    }
+
+    public function requests()
+    {
+        return $this->hasMany(StudentPropertyRequest::class);
+    }
+
 }

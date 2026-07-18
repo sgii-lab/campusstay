@@ -27,8 +27,11 @@ class PropertyResource extends Resource
                 Forms\Components\Textarea::make('description')->required(),
                 Forms\Components\TextInput::make('location')->required(),
                 Forms\Components\TextInput::make('price')->numeric()->required(),
-    
-                // NEW: status field
+                Forms\Components\Select::make('landlord_id')
+                    ->relationship('landlord', 'name')
+                    ->required(),
+
+
                 Forms\Components\Select::make('status')
                     ->options([
                         'pending' => 'Pending',
@@ -37,8 +40,16 @@ class PropertyResource extends Resource
                     ])
                     ->default('pending')
                     ->required(),
+
+                // ✅ Add this new field
+                Forms\Components\FileUpload::make('image')
+                    ->image()
+                    ->directory('properties')   // stored in storage/app/public/properties
+                    ->maxSize(2048)             // 2 MB limit
+                    ->nullable(),
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
@@ -46,16 +57,14 @@ class PropertyResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('title')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('location'),
-                Tables\Columns\TextColumn::make('price')->money('USD'),
-    
-                // NEW: landlord name
+                Tables\Columns\TextColumn::make('location')->searchable(),
+                Tables\Columns\TextColumn::make('price')->money('USD')->sortable(),
+
                 Tables\Columns\TextColumn::make('landlord.name')
                     ->label('Landlord')
                     ->sortable()
                     ->searchable(),
-    
-                // Status badge
+
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->colors([
@@ -63,6 +72,35 @@ class PropertyResource extends Resource
                         'success' => 'approved',
                         'danger' => 'rejected',
                     ]),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'approved' => 'Approved',
+                        'rejected' => 'Rejected',
+                    ]),
+
+                Tables\Filters\SelectFilter::make('location')
+                    ->options(
+                        Property::query()
+                            ->pluck('location', 'location')
+                            ->toArray()
+                    ),
+
+                Tables\Filters\SelectFilter::make('landlord_id')
+                    ->relationship('landlord', 'name'),
+
+                Tables\Filters\Filter::make('price_range')
+                    ->form([
+                        Forms\Components\TextInput::make('min')->numeric()->label('Min Price'),
+                        Forms\Components\TextInput::make('max')->numeric()->label('Max Price'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return $query
+                            ->when($data['min'], fn ($q) => $q->where('price', '>=', $data['min']))
+                            ->when($data['max'], fn ($q) => $q->where('price', '<=', $data['max']));
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -77,6 +115,7 @@ class PropertyResource extends Resource
                     ->color('danger'),
             ]);
     }
+
     
 
     public static function getRelations(): array

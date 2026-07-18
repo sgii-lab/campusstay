@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\Facades\Auth;
 
 class SgiiPanelProvider extends PanelProvider
 {
@@ -24,9 +25,10 @@ class SgiiPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('sgii')
-            ->path('sgii')
-            ->login()
+            ->id('admin')
+            ->path('admin')
+            //->auth(fn () => Auth::check() && Auth::user()?->role === 'admin') // ✅ role restriction
+            ->login() // ✅ Filament login page
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -39,6 +41,7 @@ class SgiiPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\PropertyStatusOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -50,6 +53,7 @@ class SgiiPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \App\Http\Middleware\AdminOnly::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

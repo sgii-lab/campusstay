@@ -17,9 +17,9 @@
             </div>
         @endif
 
-        <form action="{{ route('landlord.listings.update', $property) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
+        <form action="{{ route('landlord.properties.update', $property->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PATCH')
 
             <!-- Title -->
             <div class="mb-4">

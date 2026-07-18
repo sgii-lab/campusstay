@@ -8,19 +8,44 @@ use App\Models\Property;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-
+use App\Notifications\PropertyLiked;
+use App\Notifications\PropertyRequested;
+use App\Models\PropertyRequest;
 
 class PropertyController extends Controller
 {
 
     use AuthorizesRequests;
     // Homepage: show approved properties
-    public function index()
+    public function index(Request $request)
     {
-        $properties = Property::where('status', 'approved')->latest()->get();
+        $query = Property::query();
+    
+        $student = auth()->user();
+    
+        if ($student && $student->school_location) {
+            $query->where('location', 'like', '%' . $student->school_location . '%');
+        }
+    
+        // Optional: allow manual filter override
+        if ($request->filled('location')) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+    
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+    
+        $properties = $query->paginate(10);
+    
         return view('home', compact('properties'));
     }
+    
 
+    
     // Landlord dashboard
     public function dashboard()
     {
@@ -116,5 +141,50 @@ class PropertyController extends Controller
     
         return redirect()->route('landlord.dashboard')->with('success','Listing deleted!');
     }
+
+    public function studentDashboard()
+    {
+        $requests = PropertyRequest::where('student_id', auth()->id())
+            ->with('property')
+            ->get();
+
+        return view('student.dashboard', compact('requests'));
+    }
+
+    public function likedProperties()
+    {
+        $properties = Auth::user()->likedProperties;
+        return view('student.likes', compact('properties'));
+    }
+
+    public function propertyRequests()
+    {
+        $requests = Auth::user()->propertyRequests()->with('property')->get();
+        return view('student.requests', compact('requests'));
+    }
+
+    public function likeProperty(Property $property)
+    {
+        $property->landlord->notify(new PropertyLiked($property, Auth::user()));
+
+        Auth::user()->likedProperties()->syncWithoutDetaching([$property->id]);
+        return back()->with('success', 'Property liked!');
+    }
+
+    public function requestProperty(Property $property)
+    {
+        $request = PropertyRequest::create([
+            'property_id' => $property->id,
+            'student_id' => auth()->id(),
+            'status' => 'pending',
+        ]);
+    
+        // notify landlord
+        $property->landlord->notify(new \App\Notifications\PropertyRequested($property, auth()->user()));
+    
+        return back()->with('success', 'Request submitted!');
+    }
+
+
     
 }

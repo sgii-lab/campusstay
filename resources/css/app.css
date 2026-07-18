@@ -1,3 +1,248 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* General Reset */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Inter", Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+
+/* Header */
+
+.site-header {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 0.75rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo img {
+    max-height: 40px;
+}
+
+.nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav a:hover,
+.nav a.current {
+    color: #00b894;
+    /* accent color */
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background: #00b894;
+    color: #fff;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+.cart-icon {
+    font-size: 1.2rem;
+    color: #fff;
+    text-decoration: none;
+}
+
+
+/* Mobile Menu Toggle */
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    width: 24px;
+    height: 2px;
+    background: #fff;
+}
+
+
+/* Footer */
+
+.site-footer {
+    background: #1a1a1a;
+    color: #ccc;
+    padding: 2rem;
+    margin-top: 3rem;
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.footer-links a {
+    color: #ccc;
+    text-decoration: none;
+    margin-right: 1rem;
+}
+
+.footer-links a:hover {
+    color: #00b894;
+}
+
+.footer-contact p {
+    margin: 0.25rem 0;
+}
+
+.footer-copy {
+    text-align: center;
+    width: 100%;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .nav {
+        display: none;
+        flex-direction: column;
+        background: #1a1a1a;
+        padding: 1rem;
+    }
+    .nav.active {
+        display: flex;
+    }
+    .menu-toggle {
+        display: flex;
+    }
+}
+
+.logo {
+    max-height: 40px;
+    height: auto;
+    width: auto;
+    display: inline-block;
+    background-color: #fff;
+    /* adds a white background behind the logo */
+    padding: 4px 8px;
+    /* small spacing around the logo */
+    border-radius: 4px;
+    /* rounded corners for a clean look */
+}
+
+
+/* Landlord Dashboard button */
+
+.header-actions a.landlord-btn {
+    background-color: #00b894;
+    /* green accent */
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.header-actions a.landlord-btn:hover {
+    background-color: #019870;
+    /* darker green on hover */
+    transform: translateY(-2px);
+    /* subtle lift effect */
+}
+
+.nav a {
+    color: #333;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+
+.nav a.active {
+    color: #fff;
+    background-color: #3498db;
+    /* blue highlight */
+    border-radius: 4px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    /* keep items vertically centered */
+    justify-content: space-between;
+    height: 60px;
+    /* fixed height */
+    padding: 0 1rem;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header .logo {
+    flex-shrink: 0;
+}
+
+.header .nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.header .user {
+    max-width: 200px;
+    /* cap width */
+    white-space: nowrap;
+    /* prevent wrapping */
+    overflow: hidden;
+    /* hide overflow */
+    text-overflow: ellipsis;
+    /* show "..." */
+    flex-shrink: 1;
+    /* allow shrinking */
+    text-align: right;
+}

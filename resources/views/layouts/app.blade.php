@@ -6,10 +6,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100 text-gray-900">
-    @include('layouts.navigation')
+    @include('includes/header')
 
     <main class="container mx-auto p-6">
         @yield('content')
     </main>
+    @include('includes.footer')
 </body>
 </html>
