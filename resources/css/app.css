@@ -2,305 +2,111 @@
 @tailwind components;
 @tailwind utilities;
 
-/* General Reset */
-html, body {
-    height: 100%;
-    margin: 0;
-  }
+/* Reset */
 
-  body {
-    display: flex;
-    flex-direction: column;
-  }
-
-  main {
-    flex: 1; /* pushes footer down */
-  }
-
-  footer {
-    background: #1a1a1a;
-    padding: 1rem;
-    text-align: center;
-    border-top: 1px solid #ddd;
-    color: #ccc;
-    padding: 1rem;
-  }
-
-* {
+html,
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    min-height: 100%;
 }
 
-/* body {
-    font-family: "Inter", Arial, sans-serif;
-    line-height: 1.6;
-    background-color: #f9f9f9;
-    color: #333;
-} */
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+}
 
+main {
+    flex: 1;
+}
 
 /* Header */
 
 .site-header {
-    background: #1a1a1a;
-    color: #fff;
-    padding: 0.75rem 2rem;
     position: sticky;
     top: 0;
     z-index: 1000;
+    background: #1a1a1a;
+    color: white;
+    padding: 0.8rem 1.5rem;
 }
 
 .header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    max-width: 1280px;
+    margin: auto;
 }
 
+/* Logo */
 
 .logo img {
-    max-height: 40px;
+    height: 48px;
+    width: auto;
 }
 
-.nav {
-    display: flex;
-    gap: 1.5rem;
-}
+/* Navigation */
 
-.nav a {
-    color: #fff;
+nav a {
+    color: white;
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: .25s;
 }
 
-.nav a:hover,
-.nav a.current {
+nav a:hover {
     color: #00b894;
-    /* accent color */
 }
 
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+nav a.active {
+    color: white;
+    background: #00b894;
+    padding: .5rem 1rem;
+    border-radius: 6px;
 }
+
+/* Buttons */
 
 .btn-primary,
 .btn-secondary {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
+    padding: .55rem 1rem;
+    border-radius: 6px;
     font-weight: 600;
-    cursor: pointer;
-    border: none;
+    transition: .25s;
 }
 
 .btn-primary {
     background: #00b894;
-    color: #fff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #019875;
 }
 
 .btn-secondary {
-    background: transparent;
-    color: #fff;
-    border: 1px solid #fff;
+    border: 1px solid white;
+    color: white;
 }
 
-.cart-icon {
-    font-size: 1.2rem;
-    color: #fff;
-    text-decoration: none;
+.btn-secondary:hover {
+    background: white;
+    color: #1a1a1a;
 }
-
-
-/* Mobile Menu Toggle */
-
-.menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 4px;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.menu-toggle span {
-    width: 24px;
-    height: 2px;
-    background: #fff;
-}
-
-/* main {
-    padding-bottom: 80px;
-  } */
-
 
 /* Footer */
-/*
-.site-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #1a1a1a;
-    color: #ccc;
-    padding: 1rem;
-    text-align: center;
-    border-top: 1px solid #ddd;
-    z-index: 1000;
-    margin-top: 3rem;
-} */
 
-.footer-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 2rem;
+footer {
+    background: #1a1a1a;
+    color: white;
+    padding: 2rem;
+    margin-top: auto;
 }
 
 .footer-links a {
-    color: #ccc;
+    color: white;
     text-decoration: none;
-    margin-right: 1rem;
 }
 
 .footer-links a:hover {
     color: #00b894;
 }
-
-.footer-contact p {
-    margin: 0.25rem 0;
-}
-
-.footer-copy {
-    text-align: center;
-    width: 100%;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: #777;
-}
-
-
-/* Responsive */
-
-@media (max-width: 768px) {
-    .nav {
-        display: none;
-        flex-direction: column;
-        background: #1a1a1a;
-        padding: 1rem;
-    }
-    .nav.active {
-        display: flex;
-    }
-    .menu-toggle {
-        display: flex;
-    }
-}
-/* Logo container */
-.site-header .logo {
-    display: inline-block;
-    height: 48px;          /* consistent height */
-    width: auto;           /* keep aspect ratio */
-    margin-right: 1rem;    /* spacing from nav */
-    vertical-align: middle;
-  }
-
-  /* Logo image */
-  .site-header .logo img {
-    height: 100%;          /* fill container height */
-    width: auto;           /* scale proportionally */
-    object-fit: contain;   /* prevent distortion */
-    transition: transform 0.2s ease-in-out;
-  }
-
-  /* Hover effect for subtle polish */
-  .site-header .logo img:hover {
-    transform: scale(1.05); /* slight zoom on hover */
-  }
-
-
-/* Landlord Dashboard button */
-
-.header-actions a.landlord-btn {
-    background-color: #00b894;
-    /* green accent */
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.header-actions a.landlord-btn:hover {
-    background-color: #019870;
-    /* darker green on hover */
-    transform: translateY(-2px);
-    /* subtle lift effect */
-}
-
-.nav a {
-    color: #333;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-}
-
-.nav a.active {
-    color: #fff;
-    background-color: #3498db;
-    /* blue highlight */
-    border-radius: 4px;
-}
-
-.header {
-    display: flex;
-    align-items: center;
-    /* keep items vertically centered */
-    justify-content: space-between;
-    height: 60px;
-    /* fixed height */
-    padding: 0 1rem;
-    background: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.header .logo {
-    flex-shrink: 0;
-}
-
-.header .nav {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-.header .user {
-    max-width: 200px;
-    /* cap width */
-    white-space: nowrap;
-    /* prevent wrapping */
-    overflow: hidden;
-    /* hide overflow */
-    text-overflow: ellipsis;
-    /* show "..." */
-    flex-shrink: 1;
-    /* allow shrinking */
-    text-align: right;
-}
-
-.nav-link {
-    display: inline-block;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.9rem;
-    color: #333;
-    text-decoration: none;
-    white-space: nowrap; /* ✅ prevents breaking into two lines */
-  }
-
-  .nav-link.active {
-    background-color: #3498db;
-    color: #fff;
-    border-radius: 4px;
-  }
-

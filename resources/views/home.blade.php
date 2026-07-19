@@ -3,14 +3,31 @@
 @section('title', 'CampusStay')
 
 @section('content')
-    <form method="GET" action="{{ route('home') }}" class="flex gap-4 mb-6">
-        <input type="text" name="location" value="{{ request('location') }}" placeholder="Location" class="border rounded px-2 py-1">
-        <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Min Price" class="border rounded px-2 py-1">
-        <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Max Price" class="border rounded px-2 py-1">
+    <form method="GET" action="{{ route('home') }}"
+        class="flex flex-col sm:flex-row sm:flex-wrap gap-4 mb-6">
+        <input type="text" name="location" value="{{ request('location') }}"
+            placeholder="Location"
+            class="border rounded px-2 py-1 w-full sm:w-auto flex-1">
 
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filter</button>
-        <a href="{{ route('home') }}" class="bg-gray-300 text-black px-4 py-2 rounded">Clear</a>
+        <input type="number" name="min_price" value="{{ request('min_price') }}"
+            placeholder="Min Price"
+            class="border rounded px-2 py-1 w-full sm:w-auto flex-1">
+
+        <input type="number" name="max_price" value="{{ request('max_price') }}"
+            placeholder="Max Price"
+            class="border rounded px-2 py-1 w-full sm:w-auto flex-1">
+
+        <button type="submit"
+                class="bg-blue-500 text-white px-4 py-2 rounded w-full sm:w-auto">
+            Filter
+        </button>
+
+        <a href="{{ route('home') }}"
+        class="bg-gray-300 text-black px-4 py-2 rounded w-full sm:w-auto text-center">
+            Clear
+        </a>
     </form>
+
 
 
 
@@ -23,15 +40,15 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($properties as $property)
-                <div 
-                    x-data="{ open: false }" 
+                <div
+                    x-data="{ open: false }"
                     class="relative bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-xl cursor-pointer"
                     @click="open = !open"
                 >
                     <!-- Card image -->
                     @if($property->image)
-                        <img src="{{ asset('storage/' . $property->image) }}" 
-                            alt="{{ $property->title }}" 
+                        <img src="{{ asset('storage/' . $property->image) }}"
+                            alt="{{ $property->title }}"
                             class="w-full h-48 object-cover">
                     @endif
 
@@ -43,8 +60,8 @@
                     </div>
 
                     <!-- Expanded floating panel -->
-                    <div 
-                        x-show="open" 
+                    <div
+                        x-show="open"
                         x-transition:enter="transition ease-out duration-300"
                         x-transition:enter-start="opacity-0 scale-90"
                         x-transition:enter-end="opacity-100 scale-100"
@@ -60,7 +77,7 @@
 
                         <!-- Contact buttons -->
                         <div class="flex gap-4">
-                            <a href="mailto:{{ $property->landlord?->email }}" 
+                            <a href="mailto:{{ $property->landlord?->email }}"
                             class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                                 Email Landlord
                             </a>
@@ -73,7 +90,7 @@
                             <a href="{{ $waLink }}" target="_blank" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                                 Chat on WhatsApp
                             </a>
-                            <!-- <a href="https://wa.me/{{ $property->landlord?->whatsapp }}" 
+                            <!-- <a href="https://wa.me/{{ $property->landlord?->whatsapp }}"
                             target="_blank"
                             class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                                 WhatsApp Landlord
@@ -81,7 +98,7 @@
                         </div>
 
                         <!-- Close button -->
-                        <button @click="open = false" 
+                        <button @click="open = false"
                                 class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
                             ✕
                         </button>

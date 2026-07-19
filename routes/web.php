@@ -6,7 +6,11 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\LandlordController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ContactController;
+// use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\WhatsAppController;
 
+Route::post('/whatsapp/webhook', [WhatsAppController::class, 'webhook']);
 
 // Homepage
 Route::get('/', [PropertyController::class, 'index'])->name('home');
@@ -101,6 +105,32 @@ Route::post('/admin/logout', function () {
 
     return redirect('/');
 })->name('filament.admin.auth.logout');
+
+
+// Route::post('/whatsapp/webhook', function (Request $request) {
+//     Log::info('WhatsApp webhook:', $request->all());
+
+//     $message = $request->input('Body'); // Twilio sends message body here
+//     $from = $request->input('From');
+
+//     // Example: simple auto-reply
+//     return response("Hello! You said: $message");
+// });
+
+
+
+// Route::post('/whatsapp/webhook', [WhatsAppController::class, 'webhook']);
+// Route::get('/whatsapp/test', function () {
+//     app(WhatsAppController::class)
+//         ->sendWhatsAppMessage('+263717958363', 'Hello from CampusStay!');
+// });
+
+Route::get('/webhook', [WhatsAppController::class, 'verify']);
+
+Route::post('/webhook', [WhatsAppController::class, 'receive']);
+
+
+
 
 
 

@@ -11,21 +11,27 @@ class RegistrationTest extends TestCase
 
     public function test_registration_screen_can_be_rendered(): void
     {
-        $response = $this->get('/register');
+        $response = $this->get(route('register'));
 
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     public function test_new_users_can_register(): void
     {
-        $response = $this->post('/register', [
+        $response = $this->post(route('register'), [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
+
+            // Default role for the test
+            'role' => 'student',
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+
+        $response->assertRedirect(
+            route('student.dashboard', absolute: false)
+        );
     }
 }

@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -25,68 +24,38 @@ class RegisteredUserController extends Controller
 
     /**
      * Handle an incoming registration request.
-     *
-     * @throws ValidationException
      */
-    // public function store(Request $request): RedirectResponse
-    // {
-    //     $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'email' => 'required|string|email|max:255|unique:users',
-    //         'password' => 'required|string|confirmed|min:8',
-    //     ]);
-
-    //     $user = User::create([
-    //         'name' => $request->name,
-    //         'email' => $request->email,
-    //         'password' => Hash::make($request->password),
-    //         'role' => 'landlord', // force role
-    //     ]);
-
-    //     event(new Registered($user));
-
-    //     Auth::login($user);
-
-    //     return redirect(route('dashboard', absolute: false));
-    // }
-
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:student,landlord'],
-            'phone' => 'nullable|string|max:20',
-            'whatsapp' => 'nullable|string|max:20',
+        $validated = $request->validate([
+            'name'      => ['required', 'string', 'max:255'],
+            'email'     => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password'  => ['required', 'confirmed', Rules\Password::defaults()],
+            'role'      => ['nullable', 'in:student,landlord'],
+            'phone'     => ['nullable', 'string', 'max:20'],
+            'whatsapp'  => ['nullable', 'string', 'max:20'],
         ]);
 
+        // Default role if none was supplied
+        $role = $validated['role'] ?? 'student';
+
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'phone' => $request->phone,
-            'whatsapp' => $request->whatsapp,
+            'name'      => $validated['name'],
+            'email'     => $validated['email'],
+            'password'  => Hash::make($validated['password']),
+            'role'      => $role,
+            'phone'     => $validated['phone'] ?? null,
+            'whatsapp'  => $validated['whatsapp'] ?? null,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        // ✅ Role-based redirect, but default to dashboard for tests
-        if ($user->role === 'landlord') {
-            return redirect()->route('landlord.dashboard');
-        }
-
-        if ($user->role === 'student') {
-            return redirect()->route('student.dashboard');
-        }
-
-        // fallback for tests
-        return redirect()->intended(route('dashboard'));
+        return match ($user->role) {
+            'landlord' => redirect()->route('landlord.dashboard'),
+            'student'  => redirect()->route('student.dashboard'),
+            default    => redirect()->route('dashboard'),
+        };
     }
-
-
-
 }

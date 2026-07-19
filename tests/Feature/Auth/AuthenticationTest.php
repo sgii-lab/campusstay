@@ -12,29 +12,50 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get(route('login'));
 
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_student_users_can_authenticate_using_the_login_screen(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'role' => 'student',
+        ]);
 
-        $response = $this->post('/login', [
+        $response = $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertAuthenticatedAs($user);
+
+        $response->assertRedirect(route('student.dashboard', absolute: false));
+    }
+
+    public function test_landlord_users_can_authenticate_using_the_login_screen(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'landlord',
+        ]);
+
+        $response = $this->post(route('login'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+
+        $response->assertRedirect(route('landlord.dashboard', absolute: false));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'role' => 'student',
+        ]);
 
-        $this->post('/login', [
+        $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -44,11 +65,16 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_logout(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'role' => 'student',
+        ]);
 
-        $response = $this->actingAs($user)->post('/logout');
+        $response = $this
+            ->actingAs($user)
+            ->post(route('logout'));
 
         $this->assertGuest();
+
         $response->assertRedirect('/');
     }
 }

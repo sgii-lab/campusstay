@@ -12,6 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+
+        $middleware->validateCsrfTokens(except: [
+            'whatsapp/webhook',
+        ]);
+
         $middleware->alias([
             'landlord' => LandlordMiddleware::class,
         ]);
@@ -19,4 +24,3 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
-
